@@ -1,0 +1,1 @@
+# Static NFT Document Uploader

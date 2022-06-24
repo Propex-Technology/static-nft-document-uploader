@@ -3,7 +3,6 @@ import ArLocal from "arlocal";
 import yargs from 'yargs';
 import jwk from './wallet.json';
 import fs from 'fs';
-import { LocalFileData } from "get-file-object-from-local-path";
 
 const args = yargs.options({
     file: { type: 'string', demandOption: true, alias: 'f' },
@@ -16,7 +15,7 @@ async function main() {
     const isProduction = args["production"];
 
     // Choose between production or local environment
-    let arweave: Arweave;
+    let arweave: Arweave, arlocal: ArLocal;
     if (isProduction) {
         arweave = Arweave.init({
             host: 'arweave.net',
@@ -25,7 +24,7 @@ async function main() {
         });
     }
     else {
-        const arlocal: ArLocal = new ArLocal(1984, false);
+        arlocal = new ArLocal(1984, false);
         await arlocal.start();
         arweave = Arweave.init({
             host: '127.0.0.1',
@@ -67,14 +66,27 @@ async function main() {
         console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
     }
 
+    // Print out all the data
     console.log(bufferTransaction);
+    console.log("Check for file's existence here:")
+    console.log(`${arweave.api.config.protocol}://${arweave.api.config.host}:${arweave.api.config.port}/${bufferTransaction.id}`)
 
-    await arweave.api.get('mine');
+    // Converts to uint format (is ~40% cheaper)
+    const hexValue = Buffer.from(bufferTransaction.id).toString('hex');
+    const number1 = '0x' + hexValue.substring(0, 64);
+    const number2 = '0x' + hexValue.substring(64, 86);
+    console.log("UINT256 VALUE 1: " + number1);
+    console.log("UINT128 VALUE 2: " + number2);
+    console.log("STRING VALUE:    " + bufferTransaction.id);
 
-    console.log('Writing data...');
-    const data = await arweave.transactions.getData(bufferTransaction.id);
-    fs.writeFileSync('./newdeed.pdf', data);
-
+    // Leave server open for 1 minute before ending if on local host
+    if(!isProduction) {
+        await new Promise((resolve, reject) => {
+            setTimeout(() => { resolve(1) }, 60000);
+        });
+        await arlocal.stop();
+    } 
+    
     process.exit();
 }
 
