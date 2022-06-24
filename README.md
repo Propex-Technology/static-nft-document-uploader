@@ -10,6 +10,8 @@ Installation:
 ```
 npm install
 ```
+There must also be a file `wallet.json` in the main directory. This is in the JWK wallet format, which you can get by making a wallet from the [Arweave website](https://www.arweave.org/). Be sure to fund it.  
+
 Usage:
 ```
 npx ts-node .\arweaveUpload.ts -f DOCUMENT_PATH -P -l LINK1, LINK2, ...
@@ -22,6 +24,20 @@ Example:
 ```
 npx ts-node .\arweaveUpload.ts -f .\deed.pdf -P -l https://propex.uk/test-file
 ```
+
+## Output
+The program outputs the transaction data as well as additional data:
+```
+Check for file's existence here:
+http://127.0.0.1:1984/edQ2AkwPrZ_ZPqCe6ebBwDIyssySXF7XcTrAdEvW4Mo
+UINT256 VALUE 1: 0x65645132416b7750725a5f5a5071436536656242774449797373795358463758
+UINT128 VALUE 2: 0x6354724164457657344d6f
+STRING VALUE:    edQ2AkwPrZ_ZPqCe6ebBwDIyssySXF7XcTrAdEvW4Mo
+```
+It provides:
+1. A link to verify that the file has been uploaded to your provided network.
+2. uint256 & uint128 values in hexidecimal format of the transaction id. This is important because storing them in this format is **40% cheaper** than storing them as a string.
+3. The string id of the transaction.
 
 ## Use-Case
 At [Propex]("https://www.propex.uk/), we're meshing real estate and the blockchain into one. Based in the UK.
