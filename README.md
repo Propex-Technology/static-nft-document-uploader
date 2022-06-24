@@ -40,4 +40,4 @@ It provides:
 3. The string id of the transaction.
 
 ## Use-Case
-At [Propex]("https://www.propex.uk/), we're meshing real estate and the blockchain into one. Based in the UK.
+At [Propex](https://www.propex.uk/), we're meshing real estate and the blockchain into one. Based in the UK.
